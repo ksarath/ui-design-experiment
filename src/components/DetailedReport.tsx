@@ -220,14 +220,26 @@ export default function DetailedReport({ onBack, extractedText }: DetailedReport
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 {extractedText?.metadata 
-                  ? `${extractedText.metadata.fileType} • Original document with highlighted issues`
+                  ? `${extractedText.metadata.fileType}${extractedText.metadata.pageCount ? ` • ${extractedText.metadata.pageCount} pages` : ''} • ${extractedText.lines.length} lines • Original document with highlighted issues`
                   : 'Original document with highlighted issues'
                 }
               </p>
             </div>
             <div className="p-6 max-h-screen overflow-y-auto">
+              {/* Show extracted text status */}
+              {extractedText && (
+                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <div className="flex items-center space-x-2">
+                    <DocumentTextIcon className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                      Showing extracted text from: {extractedText.metadata?.fileName}
+                    </span>
+                  </div>
+                </div>
+              )}
+              
               <div className="font-mono text-sm space-y-1">
-                {/* Manuscript text with line numbers */}
+                {/* Manuscript text with line numbers - Using extracted text or fallback */}
                 {(extractedText?.lines || [
                   "Title: Impact of Digital Learning Platforms on Student Engagement",
                   "",

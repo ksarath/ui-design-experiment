@@ -9,27 +9,74 @@ export interface ExtractedText {
 }
 
 export async function extractTextFromFile(file: File): Promise<ExtractedText> {
-  const fileType = file.type || getFileTypeFromName(file.name);
-  
-  switch (fileType) {
-    case 'application/pdf':
-      return await extractTextFromPDF(file);
-    case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-    case 'application/msword':
-      return await extractTextFromWord(file);
-    case 'text/plain':
-      return await extractTextFromPlainText(file);
-    default:
-      // For unsupported file types, try to read as plain text
-      return await extractTextFromPlainText(file);
+  try {
+    console.log('Starting text extraction for:', file.name, 'Type:', file.type, 'Size:', file.size);
+    
+    // Create FormData to send file to backend
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // Call backend API for text extraction
+    const response = await fetch('/api/extract-text', {
+      method: 'POST',
+      body: formData,
+    });
+
+    console.log('API Response status:', response.status);
+    
+    if (!response.ok) {
+      let errorMessage = 'Failed to extract text';
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+        if (errorData.details) {
+          console.error('API Error details:', errorData.details);
+          errorMessage += ` (${errorData.details})`;
+        }
+      } catch (parseError) {
+        console.error('Failed to parse error response:', parseError);
+      }
+      throw new Error(errorMessage);
+    }
+
+    const extractedData = await response.json();
+    
+    console.log('Successfully extracted text from backend:', {
+      fileName: extractedData.metadata?.fileName,
+      lineCount: extractedData.lines?.length,
+      fileType: extractedData.metadata?.fileType
+    });
+
+    return extractedData;
+
+  } catch (error) {
+    console.error('Error calling backend text extraction:', error);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Failed to extract text from file';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    
+    console.log('Falling back to sample content due to error:', errorMessage);
+    
+    // Fallback to sample content if backend extraction fails
+    const fallbackText = generateFallbackContent(file.name, errorMessage);
+    
+    return {
+      content: fallbackText.content,
+      lines: fallbackText.lines,
+      metadata: {
+        fileName: file.name,
+        fileType: 'Sample Content (Extraction Failed)',
+        pageCount: 1
+      }
+    };
   }
 }
 
-async function extractTextFromPDF(file: File): Promise<ExtractedText> {
-  try {
-    // For demo purposes, we'll simulate PDF text extraction
-    // In a real application, you'd use a PDF parsing library or server-side processing
-    const samplePdfText = `Title: Impact of Digital Learning Platforms on Student Engagement
+function generateFallbackContent(fileName: string, errorMessage?: string) {
+  const sampleText = `Title: Impact of Digital Learning Platforms on Student Engagement
 
 Abstract
 This study examines the effectiveness of digital learning platforms in enhancing student
@@ -70,85 +117,15 @@ the results provide valuable insights for future research.
 Statistical Analysis
 Statistical analyses were performed using SPSS 28. Alpha level was set at 0.05 for
 all tests. Significant differences were found between groups. Post-hoc analyses
-revealed specific group differences. Effect sizes were calculated using Cohen's d.`;
+revealed specific group differences. Effect sizes were calculated using Cohen's d.
 
-    const lines = samplePdfText.split('\n').filter(line => line.trim() !== '');
-    
-    return {
-      content: samplePdfText,
-      lines,
-      metadata: {
-        fileName: file.name,
-        fileType: 'PDF',
-        pageCount: 1
-      }
-    };
-  } catch (error) {
-    console.error('Error extracting PDF text:', error);
-    throw new Error('Failed to extract text from PDF file');
-  }
-}
+Note: This is sample content shown because text extraction from "${fileName}" failed.
+${errorMessage ? `Error: ${errorMessage}` : ''}`;
 
-async function extractTextFromWord(file: File): Promise<ExtractedText> {
-  try {
-    // For Word documents, we'll use a client-side approach
-    // This is a simplified version - in production, you might want to use a server-side solution
-    const arrayBuffer = await file.arrayBuffer();
-    
-    // For now, we'll use mammoth library (you might need to add it to dependencies)
-    const mammoth = await import('mammoth');
-    const result = await mammoth.extractRawText({ arrayBuffer });
-    const lines = result.value.split('\n').filter(line => line.trim() !== '');
-    
-    return {
-      content: result.value,
-      lines,
-      metadata: {
-        fileName: file.name,
-        fileType: 'Word Document'
-      }
-    };
-  } catch (error) {
-    console.error('Error extracting Word text:', error);
-    // Fallback to plain text if mammoth fails
-    return await extractTextFromPlainText(file);
-  }
-}
-
-async function extractTextFromPlainText(file: File): Promise<ExtractedText> {
-  try {
-    const text = await file.text();
-    const lines = text.split('\n').filter(line => line.trim() !== '');
-    
-    return {
-      content: text,
-      lines,
-      metadata: {
-        fileName: file.name,
-        fileType: 'Text Document'
-      }
-    };
-  } catch (error) {
-    console.error('Error reading text file:', error);
-    throw new Error('Failed to read text file');
-  }
-}
-
-function getFileTypeFromName(fileName: string): string {
-  const extension = fileName.split('.').pop()?.toLowerCase();
+  const lines = sampleText.split('\n').filter(line => line.trim() !== '');
   
-  switch (extension) {
-    case 'pdf':
-      return 'application/pdf';
-    case 'doc':
-      return 'application/msword';
-    case 'docx':
-      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    case 'txt':
-      return 'text/plain';
-    case 'rtf':
-      return 'application/rtf';
-    default:
-      return 'text/plain';
-  }
+  return {
+    content: sampleText,
+    lines
+  };
 }
