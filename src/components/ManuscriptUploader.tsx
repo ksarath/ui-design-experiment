@@ -3,7 +3,6 @@
 import { useState, useRef, DragEvent, ChangeEvent } from 'react';
 import { DocumentArrowUpIcon, DocumentTextIcon, CheckCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import ReviewProgress from './ReviewProgress';
-import { extractTextFromFile, ExtractedText } from '../utils/fileExtractor';
 
 interface UploadedFile {
   name: string;
@@ -15,7 +14,7 @@ interface UploadedFile {
 
 export default function ManuscriptUploader() {
   const [dragActive, setDragActive] = useState(false);
-  const [files, setFiles] = useState<UploadedFile[]>([]);
+  const [file, setFile] = useState<UploadedFile | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [showReviewProgress, setShowReviewProgress] = useState(false);
@@ -49,18 +48,20 @@ export default function ManuscriptUploader() {
   };
 
   const handleFiles = (fileList: FileList) => {
-    const newFiles = Array.from(fileList).map(file => ({
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified,
-      file: file // Store the actual File object
-    }));
-    setFiles(prev => [...prev, ...newFiles]);
+    if (fileList.length > 0) {
+      const selectedFile = fileList[0]; // Only take the first file
+      setFile({
+        name: selectedFile.name,
+        size: selectedFile.size,
+        type: selectedFile.type,
+        lastModified: selectedFile.lastModified,
+        file: selectedFile
+      });
+    }
   };
 
-  const removeFile = (index: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== index));
+  const removeFile = () => {
+    setFile(null);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -76,7 +77,7 @@ export default function ManuscriptUploader() {
   };
 
   const handleSubmit = async () => {
-    if (files.length === 0) return;
+    if (!file) return;
     
     setUploading(true);
     
@@ -101,12 +102,12 @@ export default function ManuscriptUploader() {
   const handleBackToUpload = () => {
     setShowReviewProgress(false);
     setUploadComplete(false);
-    setFiles([]);
+    setFile(null);
   };
 
   // Show review progress if upload is complete and user wants to see progress
   if (showReviewProgress) {
-    return <ReviewProgress onBack={handleBackToUpload}  />;
+    return <ReviewProgress onBack={handleBackToUpload} />;
   }
 
   return (
@@ -127,7 +128,7 @@ export default function ManuscriptUploader() {
             dragActive
               ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
               : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
-          } ${files.length > 0 ? 'rounded-t-2xl' : 'rounded-2xl'} p-8 m-6 ${files.length > 0 ? 'mb-0' : ''}`}
+          } ${file ? 'rounded-t-2xl' : 'rounded-2xl'} p-8 m-6 ${file ? 'mb-0' : ''}`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
@@ -137,8 +138,7 @@ export default function ManuscriptUploader() {
             ref={inputRef}
             type="file"
             className="hidden"
-            multiple
-            accept=".pdf,.doc,.docx,.txt,.rtf"
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,.txt,.rtf"
             onChange={handleChange}
           />
 
@@ -154,7 +154,7 @@ export default function ManuscriptUploader() {
             </h3>
             
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Drag and drop your files here, or click to browse
+              Drag and drop your manuscript file here, or click to browse
             </p>
             
             <button
@@ -162,48 +162,43 @@ export default function ManuscriptUploader() {
               className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
             >
               <DocumentArrowUpIcon className="w-5 h-5 mr-2" />
-              Choose Files
+              Choose Manuscript File
             </button>
             
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-              Supported formats: PDF, DOC, DOCX, TXT, RTF (Max 10MB each)
+              Supported formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, ODT, ODS, ODP, TXT, RTF (Max 10MB)
             </p>
           </div>
         </div>
 
-        {/* File List */}
-        {files.length > 0 && (
+        {/* File Display */}
+        {file && (
           <div className="border-t border-gray-200 dark:border-gray-700 p-6">
             <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Selected Files ({files.length})
+              Selected Manuscript
             </h4>
             
-            <div className="space-y-3">
-              {files.map((file, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600"
-                >
-                  <div className="flex items-center space-x-3">
-                    <DocumentTextIcon className="h-8 w-8 text-blue-500" />
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {file.name}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatFileSize(file.size)} • {file.type || 'Unknown type'}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={() => removeFile(index)}
-                    className="p-2 text-gray-400 hover:text-red-500 transition-colors duration-200"
-                  >
-                    <XMarkIcon className="h-5 w-5" />
-                  </button>
+            <div
+              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600"
+            >
+              <div className="flex items-center space-x-3">
+                <DocumentTextIcon className="h-8 w-8 text-blue-500" />
+                <div>
+                  <p className="font-medium text-gray-900 dark:text-white">
+                    {file.name}
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {formatFileSize(file.size)} • {file.type || 'Unknown type'}
+                  </p>
                 </div>
-              ))}
+              </div>
+              
+              <button
+                onClick={removeFile}
+                className="p-2 text-gray-400 hover:text-red-500 transition-colors duration-200"
+              >
+                <XMarkIcon className="h-5 w-5" />
+              </button>
             </div>
 
             {/* Submit Button */}

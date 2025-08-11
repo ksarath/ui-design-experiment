@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { DocumentTextIcon, CheckCircleIcon, ClockIcon, CogIcon, SparklesIcon, DocumentMagnifyingGlassIcon, BookOpenIcon, PencilIcon, LinkIcon, ChatBubbleLeftEllipsisIcon, BeakerIcon } from '@heroicons/react/24/outline';
 import DetailedReport from './DetailedReport';
-import { ExtractedText } from '../utils/fileExtractor';
 
 interface ReviewStep {
   id: number;
