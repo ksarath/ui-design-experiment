@@ -23,10 +23,9 @@ interface ReviewStep {
 
 interface ReviewProgressProps {
   onBack: () => void;
-  extractedText: ExtractedText | null;
 }
 
-export default function ReviewProgress({ onBack, extractedText }: ReviewProgressProps) {
+export default function ReviewProgress({ onBack }: ReviewProgressProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [showResults, setShowResults] = useState(false);
 
@@ -115,7 +114,7 @@ export default function ReviewProgress({ onBack, extractedText }: ReviewProgress
             if (currentStepData.status === 'pending') {
               currentStepData.status = 'in-progress';
             } else if (currentStepData.status === 'in-progress') {
-              for(let substep of currentStepData.substeps) {
+              for(const substep of currentStepData.substeps) {
                 if (substep.status === 'pending') {
                   substep.status = 'in-progress';
                 }
@@ -163,7 +162,7 @@ export default function ReviewProgress({ onBack, extractedText }: ReviewProgress
       if (!currentStepData || currentStepData.status === 'completed') {
         setCurrentStep(prev => prev + 1);
       }
-    }, 5000);
+    }, 500);
 
     return () => clearInterval(timer);
   }, [currentStep]);
@@ -184,7 +183,7 @@ export default function ReviewProgress({ onBack, extractedText }: ReviewProgress
 
   // Show results when all steps are complete
   if (showResults) {
-    return <DetailedReport onBack={onBack} extractedText={extractedText} />;
+    return <DetailedReport onBack={onBack} />;
   }
 
   return (
@@ -198,7 +197,7 @@ export default function ReviewProgress({ onBack, extractedText }: ReviewProgress
           </h1>
         </div>
         <p className="text-gray-600 dark:text-gray-300 mb-6">
-          Your manuscript is being analyzed by Elsevier's advanced AI system
+          Your manuscript is being analyzed by Elsevier&apos;s advanced AI system
         </p>
         
         {/* Overall Progress Bar */}
@@ -341,7 +340,7 @@ export default function ReviewProgress({ onBack, extractedText }: ReviewProgress
           <DocumentTextIcon className="w-5 h-5 text-blue-500 mt-0.5" />
           <div>
             <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-1">
-              What's happening?
+              What&apos;s happening?
             </h4>
             <p className="text-sm text-blue-700 dark:text-blue-300">
               Our AI is performing a comprehensive analysis of your manuscript, checking for quality, completeness, and relevance. 

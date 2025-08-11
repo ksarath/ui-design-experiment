@@ -19,8 +19,6 @@ export default function ManuscriptUploader() {
   const [uploading, setUploading] = useState(false);
   const [uploadComplete, setUploadComplete] = useState(false);
   const [showReviewProgress, setShowReviewProgress] = useState(false);
-  const [extractedText, setExtractedText] = useState<ExtractedText | null>(null);
-  const [extracting, setExtracting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDrag = (e: DragEvent) => {
@@ -81,17 +79,11 @@ export default function ManuscriptUploader() {
     if (files.length === 0) return;
     
     setUploading(true);
-    setExtracting(true);
     
     try {
-      // Extract text from the first uploaded file
-      const extractedFileText = await extractTextFromFile(files[0].file);
-      setExtractedText(extractedFileText);
-      
       // Simulate upload process
       await new Promise(resolve => setTimeout(resolve, 2000));
       setUploading(false);
-      setExtracting(false);
       setUploadComplete(true);
       
       // Show review progress after a short delay
@@ -101,7 +93,6 @@ export default function ManuscriptUploader() {
     } catch (error) {
       console.error('Error processing file:', error);
       setUploading(false);
-      setExtracting(false);
       // Show error message or fallback
       alert('Error processing file. Please try again.');
     }
@@ -111,13 +102,11 @@ export default function ManuscriptUploader() {
     setShowReviewProgress(false);
     setUploadComplete(false);
     setFiles([]);
-    setExtractedText(null);
-    setExtracting(false);
   };
 
   // Show review progress if upload is complete and user wants to see progress
   if (showReviewProgress) {
-    return <ReviewProgress onBack={handleBackToUpload} extractedText={extractedText} />;
+    return <ReviewProgress onBack={handleBackToUpload}  />;
   }
 
   return (
@@ -238,7 +227,7 @@ export default function ManuscriptUploader() {
                 ) : uploading ? (
                   <>
                     <div className="w-5 h-5 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    {extracting ? 'Extracting Text...' : 'Uploading...'}
+                    Uploading...
                   </>
                 ) : (
                   <>

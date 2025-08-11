@@ -116,7 +116,7 @@ export default function ReviewResults({ onStartNew }: ReviewResultsProps) {
           </h1>
         </div>
         <p className="text-gray-600 dark:text-gray-300 mb-6">
-          Your manuscript has been thoroughly analyzed. Here's your comprehensive review report.
+          Your manuscript has been thoroughly analyzed. Here&apos;s your comprehensive review report.
         </p>
       </div>
 
@@ -271,7 +271,7 @@ export default function ReviewResults({ onStartNew }: ReviewResultsProps) {
       {/* Footer Info */}
       <div className="mt-8 text-center">
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          This review was generated using Elsevier's AI analysis system. 
+          This review was generated using Elsevier&apos;s AI analysis system. 
           For detailed questions about the review, please contact our support team.
         </p>
       </div>

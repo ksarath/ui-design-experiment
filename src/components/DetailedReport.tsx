@@ -1,12 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { ArrowLeftIcon, DocumentTextIcon, ExclamationTriangleIcon, CheckCircleIcon, InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { ExtractedText } from '../utils/fileExtractor';
+import { useEffect, useState } from 'react';
+import { ArrowLeftIcon, ExclamationTriangleIcon, CheckCircleIcon, InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 interface DetailedReportProps {
   onBack: () => void;
-  extractedText: ExtractedText | null;
 }
 
 interface ReviewComment {
@@ -23,89 +21,197 @@ interface ReviewComment {
   };
 }
 
-export default function DetailedReport({ onBack, extractedText }: DetailedReportProps) {
+export default function DetailedReport({ onBack }: DetailedReportProps) {
+  const [pdfJs, setPdfJs] = useState<typeof import('react-pdf') | undefined>(undefined);
+
+  useEffect(() => {
+    (async () => {
+      // Import pdfjs-dist dynamically for client-side rendering.
+      if( !pdfJs ) {
+        const pdfJS = await import("react-pdf");
+        console.log('pdfJS:', pdfJS);
+        pdfJS.pdfjs.GlobalWorkerOptions.workerSrc =
+            window.location.origin + "/pdf.worker.min.mjs";
+        setPdfJs(pdfJS);
+      } else {
+        console.log('pdfJS already loaded:', pdfJs);
+      }
+    })();
+  }, [pdfJs]);
+
+  const [numPages, setNumPages] = useState<number>();
+  const [pageNumber, setPageNumber] = useState<number>(1);
+
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
+    setNumPages(numPages);
+  }
+
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const fileName = "Accident Analysis and Prevention.pdf";
+  const fileType = "PDF"; // Example file type, replace with actual logic
+  const extractedText = [`
+    // Placeholder for extracted text, replace with actual data
+  `];
 
   const reviewComments: ReviewComment[] = [
-    {
-      id: '1',
-      line: 16,
-      type: 'major',
-      category: 'Methodology',
-      message: 'Sample size inconsistency. Introduction mentions 150 participants, but methodology mentions 50.',
-      originalText: 'A total of 50 participants were recruited for this study.',
-      suggestedText: 'A total of 150 participants were recruited for this study.',
-      context: {
-        before: ['Participants were recruited from local universities using convenience sampling methods.'],
-        after: ['All participants provided informed consent before participating in the study.']
-      }
-    },
-    {
-      id: '2',
-      line: 21,
-      type: 'critical',
-      category: 'Language',
-      message: 'Subject-verb disagreement. The plural subject requires a plural verb.',
-      originalText: 'where the treatment group The results shows significant improvement compared to the',
-      suggestedText: 'where the treatment group The results show significant improvement compared to the',
-      context: {
-        before: ['In our comprehensive analysis of the experimental data, we observed multiple instances'],
-        after: ['control group. This improvement was consistent across all measured parameters.']
-      }
-    },
-    {
-      id: '3',
-      line: 25,
-      type: 'minor',
-      category: 'Structure',
-      message: 'Consider adding a transition sentence to improve flow between paragraphs.',
-      originalText: 'Table 2 shows the demographic characteristics.',
-      suggestedText: 'To better understand the study population, Table 2 shows the demographic characteristics.',
-      context: {
-        before: ['These findings align with previous research in the field. The implications of these', 'results are discussed below.'],
-        after: ['Age ranged from 18 to 65 years (M = 34.2, SD = 12.1). Gender distribution was']
-      }
-    },
-    {
-      id: '4',
-      line: 30,
-      type: 'critical',
-      category: 'References',
-      message: 'Citation format is incorrect. Use APA 7th edition format.',
-      originalText: 'Smith et al (2023) found similar results.',
-      suggestedText: 'Smith et al. (2023) found similar results.',
-      context: {
-        before: ['Previous studies have shown varying results. However, recent meta-analyses suggest'],
-        after: ['This consistency across studies strengthens', 'the evidence for this phenomenon.']
-      }
-    },
-    {
-      id: '5',
-      line: 34,
-      type: 'major',
-      category: 'Completeness',
-      message: 'Consider discussing study limitations in more detail.',
-      originalText: 'This study has some limitations.',
-      suggestedText: 'This study has several limitations that should be acknowledged. First, the sample size was relatively small, which may limit generalizability. Second, the cross-sectional design prevents causal inferences.',
-      context: {
-        before: ['The findings of this study contribute to the literature by providing new insights', 'into the phenomenon.'],
-        after: ['Despite these limitations,', 'the results provide valuable insights for future research.']
-      }
-    },
-    {
-      id: '6',
-      line: 38,
-      type: 'enhancement',
-      category: 'Style',
-      message: 'Consider using active voice for stronger impact.',
-      originalText: 'Significant differences were found between groups.',
-      suggestedText: 'We found significant differences between groups.',
-      context: {
-        before: ['Statistical analyses were performed using SPSS 28. Alpha level was set at 0.05 for', 'all tests.'],
-        after: ['Post-hoc analyses', 'revealed specific group differences. Effect sizes were calculated using Cohen\'s d.']
-      }
+  {
+    id: '1',
+    line: 112,
+    type: 'major',
+    category: 'Language',
+    message: 'Long sentence reduces readability; consider breaking into two shorter sentences.',
+    originalText: 'Sharing responsibility for speed management requires a shift in the mindset of those involved in improving safety within the road system, as responsibility for (speed-related) road crash occurrence has traditionally been attributed to road users.',
+    suggestedText: 'Sharing responsibility for speed management requires a shift in the mindset of those involved in improving safety within the road system. Traditionally, responsibility for (speed-related) road crash occurrence has been attributed to road users.',
+    context: {
+      before: ['Investigating practices, perceptions, and challenges regarding responsibility attribution within this specific policy area is therefore an important step towards advancing speed management.'],
+      after: ['It also entails moving away from traditional governance models, where policies are expected to be dictated solely by governments.']
     }
-  ];
+  },
+  {
+    id: '2',
+    line: 328,
+    type: 'critical',
+    category: 'Tense Consistency',
+    message: 'Switches between present and past tense when describing completed methodology steps.',
+    originalText: 'A preliminary open coding was conducted by the first author to familiarise herself with the data and to build a preliminary understanding of its content. NVivo 12 software is utilised for this first step.',
+    suggestedText: 'A preliminary open coding was conducted by the first author to familiarise herself with the data and to build a preliminary understanding of its content. NVivo 12 software was utilised for this first step.',
+    context: {
+      before: ['Interviews were conducted and transcribed by the first author and deidentified prior to analysis.'],
+      after: ['A RTA of the complete data corpus (n = 33) was undertaken following the steps pragmatically outlined by Braun and Clarke (2006)...']
+    }
+  },
+  {
+    id: '3',
+    line: 671,
+    type: 'major',
+    category: 'Completeness',
+    message: 'Consider adding a clear limitations section to strengthen transparency.',
+    originalText: 'Our findings also suggest jurisdictions claiming to follow a Safe System Approach may adopt its principles to varying degrees, closer to a spectrum than to a binary classification.',
+    suggestedText: 'Our findings also suggest jurisdictions claiming to follow a Safe System Approach may adopt its principles to varying degrees, closer to a spectrum than to a binary classification. However, the study has several limitations, including the focus on two primary countries, reliance on self-reported expert perspectives, and potential cultural bias in interpretations.',
+    context: {
+      before: ['Furthermore, its practical implementation may at times be challenging and subject to misinterpretation.'],
+      after: ['Elvik (2023) reached to a similar conclusion after examining Norway’s road safety policy and contrasting it with an operationalised definition of perfect compliance with Safe System principles.']
+    }
+  },
+  {
+    id: '4',
+    line: 892,
+    type: 'minor',
+    category: 'Structure',
+    message: 'Add a transition sentence to improve flow between Theme 3 and Theme 4.',
+    originalText: '3.4. Theme 4: The need to reassess the governance of speed management in relation to stakeholders’ accountability, roles, responsibilities, and the transparency of policy processes',
+    suggestedText: 'Building on the challenges and opportunities identified in Theme 3, Theme 4 examines the need to reassess the governance of speed management in relation to stakeholders’ accountability, roles, responsibilities, and the transparency of policy processes.',
+    context: {
+      before: ['Properly accounting for these factors could shift the balance in favour of lower speed limits, according to this participant.'],
+      after: ['This theme encompasses a range of perspectives shared by participants, reflecting the notion of an evolving governance framework for speed management.']
+    }
+  },
+  {
+    id: '5',
+    line: 1254,
+    type: 'critical',
+    category: 'References',
+    message: 'Ensure in-press or unpublished works are clearly marked to maintain transparency.',
+    originalText: 'See Keller et al., 2025, “Actors, roles and responsibilities for speed management: A systems-based analysis of key stakeholders in Sweden and Queensland, Australia”, submitted to Safety Science for publication, for a discussion on this topic.',
+    suggestedText: 'See Keller et al., 2025 (submitted), “Actors, roles and responsibilities for speed management: A systems-based analysis of key stakeholders in Sweden and Queensland, Australia”, for a discussion on this topic.',
+    context: {
+      before: ['Recognising these underlying interests and exploring ways to foster alignment is thus a critical first step towards creating a self-reinforcing collaborative governance network (Emerson et al., 2012).'],
+      after: ['Participants reported a trade-off between transport']
+    }
+  },
+  {
+    id: '6',
+    line: 144,
+    type: 'enhancement',
+    category: 'Style',
+    message: 'Consider reducing repetition of “shared responsibility is difficult to operationalise” to improve conciseness.',
+    originalText: 'This innovative governance arrangement remains insufficiently studied and potentially may be being adopted by jurisdictions as part of a larger package (i.e., the Safe System Approach), at times without clear understanding. This situation is likely to bring about difficulties in putting the concept into practice.',
+    suggestedText: 'This innovative governance arrangement remains insufficiently studied and may be adopted by jurisdictions as part of a larger package (i.e., the Safe System Approach), sometimes without clear understanding—making practical implementation challenging.',
+    context: {
+      before: ['It also entails moving away from traditional governance models, where policies are expected to be dictated solely by governments.'],
+      after: ['This research study aims to contribute to addressing this gap in the literature by studying how the concept of shared responsibility is perceived across stakeholders involved in speed management utilising systems thinking.']
+    }
+  },
+  {
+    id: '7',
+    line: 52,
+    type: 'minor',
+    category: 'Readability',
+    message: 'Sentence is overly long; consider splitting for clarity.',
+    originalText: 'This approach forms the foundation of the United Nations Global Plan for the Decade of Action for Road Safety (2021–2030) (WHO, 2021) and is strongly supported by thought-leading organisations (e.g., Bliss and Breen, 2009; OECD, 2016).',
+    suggestedText: 'This approach forms the foundation of the United Nations Global Plan for the Decade of Action for Road Safety (2021–2030) (WHO, 2021). It is strongly supported by thought-leading organisations (e.g., Bliss and Breen, 2009; OECD, 2016).',
+    context: {
+      before: ['The Safe System Approach to road safety is grounded in the principle of shared responsibility.'],
+      after: ['Some recent evidence suggests this approach has been effective for improving road safety outcomes (Elvik, 2023; Elvik and Nævestad, 2023; Khan and Das, 2024).']
+    }
+  },
+  {
+    id: '8',
+    line: 210,
+    type: 'enhancement',
+    category: 'Flow',
+    message: 'Consider adding a linking phrase to connect systems thinking discussion to road safety context.',
+    originalText: 'The adoption of a systems (thinking) approach to road safety is not new, but nevertheless is not mainstream within the road safety arena, even despite its increasing popularity in closely related disciplines such as public health (e.g., Carey et al., 2015; Johnson et al., 2019; WHO, 2009).',
+    suggestedText: 'The adoption of a systems (thinking) approach to road safety is not new. However, it remains far from mainstream in the road safety arena, despite its increasing popularity in closely related disciplines such as public health (e.g., Carey et al., 2015; Johnson et al., 2019; WHO, 2009). This highlights a potential gap in translating theoretical frameworks into practical road safety policies.',
+    context: {
+      before: ['This involves identifying the most important elements and interactions that give shape to the system under study, and only then reflect on how the system might be modified to avoid certain problems.'],
+      after: ['Different authors have explored a systems thinking approach to road safety over the last decade (e.g., Lansdown et al., 2015; Newnam et al., 2017; Salmon et al., 2020).']
+    }
+  },
+  {
+    id: '9',
+    line: 446,
+    type: 'minor',
+    category: 'Clarity',
+    message: 'Replace nominalisation with active verb for stronger impact.',
+    originalText: 'This flexibility was particularly valuable for unpacking perceptions around the concept of responsibility as applied in practice in the field of speed management.',
+    suggestedText: 'This flexibility was particularly valuable for unpacking how participants perceived and applied the concept of responsibility in speed management practice.',
+    context: {
+      before: ['The semi-structured format enabled in-depth conversations, allowing participants to articulate their views using their own language and framings.'],
+      after: ['Seven interviews were conducted in person, three responses to the questions were submitted in written form by email, and 23 were held virtually.']
+    }
+  },
+  {
+    id: '10',
+    line: 888,
+    type: 'minor',
+    category: 'Punctuation',
+    message: 'Long list is hard to follow; consider breaking into two sentences or using semicolons.',
+    originalText: 'This theme encompasses a range of perspectives shared by participants, reflecting the notion of an evolving governance framework for speed management. Discussions focused on claims for expanding the current stakeholder map (Subtheme 4.1), on efforts to ensure stakeholders take responsibility for improving speed management (Subtheme 4.2), and claims for revisiting and improving the allocation of responsibilities, strengthening accountability mechanisms, and increasing transparency in managing this critical policy issue.',
+    suggestedText: 'This theme encompasses a range of perspectives shared by participants, reflecting the notion of an evolving governance framework for speed management. Discussions focused on: (1) claims for expanding the current stakeholder map (Subtheme 4.1); (2) efforts to ensure stakeholders take responsibility for improving speed management (Subtheme 4.2); and (3) calls to revisit and improve responsibility allocation, strengthen accountability mechanisms, and increase transparency in managing this critical policy issue.',
+    context: {
+      before: ['Building on the challenges and opportunities identified in Theme 3, Theme 4 examines the need to reassess the governance of speed management in relation to stakeholders’ accountability, roles, responsibilities, and the transparency of policy processes.'],
+      after: ['Subtheme 4.1: Shared desires for a broader stakeholder map.']
+    }
+  },
+  {
+    id: '11',
+    line: 1034,
+    type: 'enhancement',
+    category: 'Readability',
+    message: 'Simplify sentence structure to make point more direct.',
+    originalText: 'Some participants further noted that certain actors were actively attempting to be recognised as legitimate stakeholders but encountered barriers in gaining acknowledgment and influence.',
+    suggestedText: 'Some participants noted that certain actors actively sought recognition as legitimate stakeholders but faced barriers to acknowledgment and influence.',
+    context: {
+      before: ['Local schools were emphasised as crucial stakeholders, with parent and citizen associations being potential advocates for safer, slower speeds and alternative transportation modes.'],
+      after: ['For example, companies were described as being active in this area within the Australian context, but some participants did not perceive there were significant engagement efforts currently taking place with this stakeholder:']
+    }
+  },
+  {
+    id: '12',
+    line: 1460,
+    type: 'minor',
+    category: 'Flow',
+    message: 'Add concluding sentence to reinforce study contribution before moving to next section.',
+    originalText: 'Policy framing often strategically advances stakeholders’ (sometimes concealed) interests (Bacchi, 2009).',
+    suggestedText: 'Policy framing often strategically advances stakeholders’ (sometimes concealed) interests (Bacchi, 2009). Recognising and addressing these framing effects is essential for designing effective and equitable speed management policies.',
+    context: {
+      before: ['As a result, problem framing affects not only policy choices but also governance arrangements and the distribution of responsibility among stakeholders.'],
+      after: ['4.3. Theme 3: Shared responsibility for speed management is enhanced by the alignment of stakeholder goals']
+    }
+  }
+];
+
 
   const categories = ['all', 'Language', 'Methodology', 'Structure', 'References', 'Completeness', 'Style'];
   
@@ -216,19 +322,32 @@ export default function DetailedReport({ onBack, extractedText }: DetailedReport
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {extractedText?.metadata?.fileName || 'Manuscript Text'}
+                {fileName || 'Manuscript Text'}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                {extractedText?.metadata 
-                  ? `${extractedText.metadata.fileType} • Original document with highlighted issues`
+                {fileType 
+                  ? `${fileType} • Original document with highlighted issues`
                   : 'Original document with highlighted issues'
                 }
               </p>
             </div>
             <div className="p-6 max-h-screen overflow-y-auto">
               <div className="font-mono text-sm space-y-1">
+                {pdfJs ? 
+                    <div>
+                        <pdfJs.Document file="Article.pdf" onLoadSuccess={onDocumentLoadSuccess}>
+                            <pdfJs.Page pageNumber={pageNumber} />
+                        </pdfJs.Document>
+                        <p>
+                            Page {pageNumber} of {numPages}
+                        </p>
+                    </div> : 
+                    <div>
+                        <p>No PDF viewer available</p>
+                    </div>
+                }
                 {/* Manuscript text with line numbers */}
-                {(extractedText?.lines || [
+                {/* {(extractedText || [
                   "Title: Impact of Digital Learning Platforms on Student Engagement",
                   "",
                   "Abstract",
@@ -291,7 +410,7 @@ export default function DetailedReport({ onBack, extractedText }: DetailedReport
                       </div>
                     </div>
                   );
-                })}
+                })} */}
               </div>
             </div>
           </div>
