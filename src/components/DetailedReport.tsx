@@ -144,50 +144,50 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
   const fileName = "Accident Analysis and Prevention.pdf";
   const fileType = "PDF"; // Example file type, replace with actual logic
   const extractedText = [
-    <h1>Safe System Approach Manuscript</h1>,
+    <h1 key="para-1">Safe System Approach Manuscript</h1>,
 
-    <h2>Introduction</h2>,
-    <p>
+    <h2 key="para-2">Introduction</h2>,
+    <p key="para-3">
       The Safe System Approach to road safety is grounded in the principle of
       shared responsibility.
     </p>,
-    <p>
+    <p key="para-4">
       This approach forms the foundation of the United Nations Global Plan for
       the Decade of Action for Road Safety (2021–2030) (WHO, 2021) and is
       strongly supported by thought-leading organisations (e.g., Bliss and
       Breen, 2009; OECD, 2016).
     </p>,
-    <p>
+    <p key="para-5">
       Some recent evidence suggests this approach has been effective for
       improving road safety outcomes (Elvik, 2023; Elvik and Nævestad, 2023;
       Khan and Das, 2024).
     </p>,
 
-    <h2>Rationale</h2>,
-    <p>
+    <h2 key="para-6">Rationale</h2>,
+    <p key="para-7">
       Investigating practices, perceptions, and challenges regarding
       responsibility attribution within this specific policy area is therefore
       an important step towards advancing speed management.
     </p>,
-    <p>
+    <p key="para-8">
       Sharing responsibility for speed management requires a shift in the
       mindset of those involved in improving safety within the road system, as
       responsibility for (speed-related) road crash occurrence has traditionally
       been attributed to road users.
     </p>,
-    <p>
+    <p key="para-9">
       It also entails moving away from traditional governance models, where
       policies are expected to be dictated solely by governments.
     </p>,
 
-    <h2>Study Aim</h2>,
-    <p>
+    <h2 key="para-10">Study Aim</h2>,
+    <p key="para-101">
       This research study aims to contribute to addressing this gap in the
       literature by studying how the concept of shared responsibility is
       perceived across stakeholders involved in speed management utilising
       systems thinking.
     </p>,
-    <p>
+    <p key="para-11">
       This innovative governance arrangement remains insufficiently studied and
       potentially may be being adopted by jurisdictions as part of a larger
       package (i.e., the Safe System Approach), at times without clear
@@ -195,83 +195,83 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
       putting the concept into practice.
     </p>,
 
-    <h2>Systems Thinking and Road Safety</h2>,
-    <p>
+    <h2 key="para-12">Systems Thinking and Road Safety</h2>,
+    <p key="para-13">
       This involves identifying the most important elements and interactions
       that give shape to the system under study, and only then reflecting on how
       the system might be modified to avoid certain problems.
     </p>,
-    <p>
+    <p key="para-14">
       The adoption of a systems (thinking) approach to road safety is not new,
       but nevertheless is not mainstream within the road safety arena, even
       despite its increasing popularity in closely related disciplines such as
       public health (e.g., Carey et al., 2015; Johnson et al., 2019; WHO, 2009).
     </p>,
-    <p>
+    <p key="para-15">
       Different authors have explored a systems thinking approach to road safety
       over the last decade (e.g., Lansdown et al., 2015; Newnam et al., 2017;
       Salmon et al., 2020).
     </p>,
 
-    <h2>Data Collection & Methods (excerpt)</h2>,
-    <p>
+    <h2 key="para-16">Data Collection & Methods (excerpt)</h2>,
+    <p key="para-17">
       The semi-structured format enabled in-depth conversations, allowing
       participants to articulate their views using their own language and
       framings.
     </p>,
-    <p>
+    <p key="para-18">
       This flexibility was particularly valuable for unpacking perceptions
       around the concept of responsibility as applied in practice in the field
       of speed management.
     </p>,
-    <p>
+    <p key="para-19">
       Seven interviews were conducted in person, three responses to the
       questions were submitted in written form by email, and 23 were held
       virtually.
     </p>,
 
-    <h3>Analysis</h3>,
-    <p>
+    <h3 key="para-20">Analysis</h3>,
+    <p key="para-21">
       Interviews were conducted and transcribed by the first author and
       deidentified prior to analysis.
     </p>,
-    <p>
+    <p key="para-22">
       A preliminary open coding was conducted by the first author to familiarise
       herself with the data and to build a preliminary understanding of its
       content. NVivo 12 software is utilised for this first step.
     </p>,
-    <p>
+    <p key="para-23">
       A RTA of the complete data corpus (n = 33) was undertaken following the
       steps pragmatically outlined by Braun and Clarke (2006)...
     </p>,
 
-    <h2>Findings (selected excerpts)</h2>,
-    <p>
+    <h2 key="para-24">Findings (selected excerpts)</h2>,
+    <p key="para-25">
       Furthermore, its practical implementation may at times be challenging and
       subject to misinterpretation.
     </p>,
-    <p>
+    <p key="para-26">
       Our findings also suggest jurisdictions claiming to follow a Safe System
       Approach may adopt its principles to varying degrees, closer to a spectrum
       than to a binary classification.
     </p>,
-    <p>
+    <p key="para-27">
       Elvik (2023) reached a similar conclusion after examining Norway’s road
       safety policy and contrasting it with an operationalised definition of
       perfect compliance with Safe System principles.
     </p>,
 
-    <h2>Theme 4 — Governance & Accountability</h2>,
-    <p>
+    <h2 key="para-28">Theme 4 — Governance & Accountability</h2>,
+    <p key="para-29">
       Properly accounting for these factors could shift the balance in favour of
       lower speed limits, according to this participant.
     </p>,
-    <p>
+    <p key="para-30">
       3.4 Theme 4: This examines the need to reassess the governance of speed
       management in relation to stakeholders’ accountability, roles,
       responsibilities, and the transparency of policy processes.
     </p>,
-    <p>
+    <p key="para-31">
       This theme encompasses a range of perspectives shared by participants,
       reflecting the notion of an evolving governance framework for speed
       management. Discussions focused on claims for expanding the current
@@ -286,54 +286,54 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
     //   <li>Efforts to ensure stakeholders take responsibility for improving speed management (Subtheme 4.2);</li>
     //   <li>Calls to revisit and improve responsibility allocation, strengthen accountability mechanisms, and increase transparency in managing this critical policy issue (Subtheme 4.3).</li>
     // </ol>,
-    <p>
+    <p key="para-32">
       <strong>Subtheme 4.1:</strong> Shared desires for a broader stakeholder
       map.
     </p>,
 
-    <h2>Stakeholder Engagement (excerpt)</h2>,
-    <p>
+    <h2 key="para-33">Stakeholder Engagement (excerpt)</h2>,
+    <p key="para-34">
       Local schools were emphasised as crucial stakeholders, with parent and
       citizen associations being potential advocates for safer, slower speeds
       and alternative transportation modes.
     </p>,
-    <p>
+    <p key="para-35">
       Some participants further noted that certain actors were actively
       attempting to be recognised as legitimate stakeholders but encountered
       barriers in gaining acknowledgment and influence.
     </p>,
-    <p>
+    <p key="para-36">
       For example, companies were described as being active in this area within
       the Australian context, but some participants did not perceive there were
       significant engagement efforts currently taking place with this
       stakeholder:
     </p>,
 
-    <h2>Related Work</h2>,
-    <p>
+    <h2 key="para-37">Related Work</h2>,
+    <p key="para-38">
       Recognising these underlying interests and exploring ways to foster
       alignment is thus a critical first step towards creating a
       self-reinforcing collaborative governance network (Emerson et al., 2012).
     </p>,
-    <p>
+    <p key="para-39">
       See Keller et al., 2025, “Actors, roles and responsibilities for speed
       management: A systems-based analysis of key stakeholders in Sweden and
       Queensland, Australia”, submitted to Safety Science for publication, for a
       discussion on this topic.
     </p>,
-    <p>Participants reported a trade-off between transport...</p>,
+    <p key="para-40">Participants reported a trade-off between transport...</p>,
 
-    <h2>Policy Framing & Conclusion (excerpt)</h2>,
-    <p>
+    <h2 key="para-41">Policy Framing & Conclusion (excerpt)</h2>,
+    <p key="para-42">
       As a result, problem framing affects not only policy choices but also
       governance arrangements and the distribution of responsibility among
       stakeholders.
     </p>,
-    <p>
+    <p key="para-43">
       Policy framing often strategically advances stakeholders’ (sometimes
       concealed) interests (Bacchi, 2009).
     </p>,
-    <p>
+    <p key="para-44">
       <strong>Theme 3:</strong> Shared responsibility for speed management is
       enhanced by the alignment of stakeholder goals.
     </p>,
@@ -902,8 +902,6 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
                     ]
                 ).map((line, index) => {
                   const lineNumber = index + 1;
-                  const lineText =
-                    typeof line === "string" ? line : line.props.children;
 
                   // Check if this line contains text from any selected comment
                   const selectedComment = selectedCommentId

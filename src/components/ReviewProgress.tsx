@@ -206,7 +206,7 @@ export default function ReviewProgress({ onBack }: ReviewProgressProps) {
       if (!currentStepData || currentStepData.status === "completed") {
         setCurrentStep((prev) => prev + 1);
       }
-    }, 100);
+    }, 3000);
 
     return () => clearInterval(timer);
   }, [currentStep]);
