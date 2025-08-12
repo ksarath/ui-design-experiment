@@ -32,6 +32,8 @@ interface ReviewComment {
 }
 
 export default function DetailedReport({ onBack }: DetailedReportProps) {
+  const overallScore = 8.2;
+  const maxScore = 10;
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [activeTab, setActiveTab] = useState<
     "comments" | "summary" | "references"
@@ -62,6 +64,13 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
       }
     }
     return null;
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 8.5) return "text-green-600";
+    if (score >= 7.0) return "text-blue-600";
+    if (score >= 6.0) return "text-yellow-600";
+    return "text-red-600";
   };
 
   // Function to handle accepting a comment
@@ -1034,15 +1043,15 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
                     <div className="flex space-x-2 mb-2">
                       <button
                         onClick={handleAcceptAll}
-                        className="flex-1 px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+                        className="flex-1 px-3 py-2 bg-green-200 hover:bg-green-600 text-black text-xs font-medium rounded-lg transition-colors duration-200"
                       >
                         Accept All
                       </button>
                       <button
                         onClick={handleRejectAll}
-                        className="flex-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+                        className="flex-1 px-3 py-2 bg-red-200 hover:bg-red-600 text-black text-xs font-medium rounded-lg transition-colors duration-200"
                       >
-                        Reject All
+                        Dismiss All
                       </button>
                     </div>
                   )}
@@ -1058,7 +1067,7 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
                         (c) => commentStatuses[c.id] === "rejected"
                       ).length
                     }{" "}
-                    rejected
+                    dismissed
                   </p>
                 </div>
 
@@ -1112,7 +1121,7 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
                             >
                               {commentStatuses[comment.id] === "accepted"
                                 ? "✓ Accepted"
-                                : "✗ Rejected"}
+                                : "✗ Dismissed"}
                             </span>
                           )}
                         </div>
@@ -1158,7 +1167,7 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
                                     e.stopPropagation();
                                     handleAcceptComment(comment.id);
                                   }}
-                                  className="flex-1 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-medium rounded transition-colors duration-200"
+                                  className="flex-1 px-3 py-1.5 bg-green-200 hover:bg-green-600 text-black text-xs font-medium rounded transition-colors duration-200"
                                 >
                                   Accept
                                 </button>
@@ -1167,9 +1176,9 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
                                     e.stopPropagation();
                                     handleRejectComment(comment.id);
                                   }}
-                                  className="flex-1 px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-medium rounded transition-colors duration-200"
+                                  className="flex-1 px-3 py-1.5 bg-red-200 hover:bg-red-600 text-black text-xs font-medium rounded transition-colors duration-200"
                                 >
-                                  Reject
+                                  Dismiss
                                 </button>
                               </div>
                             )}
@@ -1200,13 +1209,44 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
             {activeTab === "summary" && (
               <div className="h-full overflow-y-auto scrollbar-thin p-4 space-y-6">
                 {/* Overall Score */}
-                <div className="text-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-4 rounded-xl">
-                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">
-                    {reviewSummary.overallScore}/100
-                  </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-300">
-                    Overall Quality Score
-                  </div>
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-8">
+                    <div className="p-6 text-center">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Overall Quality Score</h2>
+                    <div className="flex items-center justify-center mb-4">
+                        <div className="relative w-32 h-32">
+                        <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                            <circle
+                            cx="60"
+                            cy="60"
+                            r="50"
+                            stroke="currentColor"
+                            strokeWidth="8"
+                            fill="none"
+                            className="text-gray-200 dark:text-gray-700"
+                            />
+                            <circle
+                            cx="60"
+                            cy="60"
+                            r="50"
+                            stroke="currentColor"
+                            strokeWidth="8"
+                            fill="none"
+                            strokeDasharray={`${(overallScore / maxScore) * 314} 314`}
+                            className="text-blue-500"
+                            strokeLinecap="round"
+                            />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <span className={`text-3xl font-bold ${getScoreColor(overallScore)}`}>
+                            {overallScore}
+                            </span>
+                        </div>
+                        </div>
+                    </div>
+                    <p className="text-gray-600 dark:text-gray-300">
+                        Your manuscript shows <strong className="text-blue-600">strong potential</strong> with some areas for improvement
+                    </p>
+                    </div>
                 </div>
 
                 {/* Category Breakdown */}
@@ -1403,12 +1443,6 @@ export default function DetailedReport({ onBack }: DetailedReportProps) {
           className="px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-all duration-300"
         >
           ← Back to Upload
-        </button>
-        <button className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105">
-          Export as PDF
-        </button>
-        <button className="px-6 py-3 bg-green-100 hover:bg-green-200 dark:bg-green-900 dark:hover:bg-green-800 text-green-700 dark:text-green-300 font-medium rounded-xl transition-all duration-300">
-          Copy Comments
         </button>
       </div>
     </div>
