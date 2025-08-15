@@ -9,8 +9,6 @@ interface FileUploadBoxProps {
 
 export default function FileUploadBox({ onFileAnalyze }: FileUploadBoxProps) {
   const [dragActive, setDragActive] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -28,22 +26,16 @@ export default function FileUploadBox({ onFileAnalyze }: FileUploadBoxProps) {
     
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
-      setUploadedFile(file);
+      onFileAnalyze && onFileAnalyze(file);
     }
   }, []);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setUploadedFile(file);
+      onFileAnalyze && onFileAnalyze(file);
     }
   }, []);
-
-  const handleAnalyze = useCallback(() => {
-    if (uploadedFile && onFileAnalyze) {
-      onFileAnalyze(uploadedFile);
-    }
-  }, [uploadedFile, onFileAnalyze]);
 
   return (
     <div className="w-full h-full">
@@ -54,7 +46,6 @@ export default function FileUploadBox({ onFileAnalyze }: FileUploadBoxProps) {
             ? 'border-blue-500 bg-blue-50' 
             : 'border-gray-300 hover:border-gray-400'
           }
-          ${uploadedFile ? 'bg-green-50 border-green-300' : ''}
         `}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -70,40 +61,18 @@ export default function FileUploadBox({ onFileAnalyze }: FileUploadBoxProps) {
         />
         
         <div className="space-y-4">
-          {uploadedFile ? (
-            <>
-              <DocumentArrowUpIcon className="mx-auto h-12 w-12 text-green-600" />
-              <div>
-                <p className="text-sm font-medium text-green-800">
-                  File uploaded successfully!
-                </p>
-                <p className="text-xs text-green-600 mt-1">
-                  {uploadedFile.name}
-                </p>
-                <button
-                  onClick={handleAnalyze}
-                  className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Start AI Analysis
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <CloudArrowUpIcon className="mx-auto h-12 w-12 text-gray-400" />
-              <div>
+            <CloudArrowUpIcon className="mx-auto h-12 w-12 text-gray-400" />
+            <div>
                 <p className="text-sm text-gray-600">
-                  <label htmlFor="file-upload" className="font-medium text-blue-600 cursor-pointer hover:text-blue-500">
+                    <label htmlFor="file-upload" className="font-medium text-blue-600 cursor-pointer hover:text-blue-500">
                     Click to upload
-                  </label>{' '}
-                  or drag and drop
+                    </label>{' '}
+                    or drag and drop
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  PDF, DOC, DOCX, or TXT files
+                    PDF, DOC, DOCX, or TXT files
                 </p>
-              </div>
-            </>
-          )}
+            </div>
         </div>
       </div>
     </div>
