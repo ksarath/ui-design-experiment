@@ -115,52 +115,54 @@ export default function ElsevierReviewProgress({ fileName, onComplete }: Elsevie
   }, [progress, currentStep]);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="bg-white min-h-screen flex flex-col">
       <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         
         {/* Header Section */}
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Elsevier AI is performing a comprehensive review of your manuscript
+            We are processing your manuscript
           </h1>
           <p className="text-lg text-gray-600 mb-2">
-            manuscript file: <span className="font-semibold text-gray-900">{fileName}</span>
+            Manuscript: <span className="font-semibold text-gray-900">{fileName}</span>
           </p>
         </div>
 
-        {/* Progress Bar */}
-        <div className="mb-12">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700">
-              {reviewSteps.find(step => step.status === 'current')?.title || 'Analysis Complete'}
-            </span>
-            <span className="text-sm font-medium text-gray-700">{Math.round(progress)}%</span>
+        {/* Shared container for progress bar and next steps */}
+        <div className="max-w-2xl mx-auto">
+          {/* Progress Bar */}
+          <div className="mb-12">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-base text-gray-700">
+                {reviewSteps.find(step => step.status === 'current')?.title || 'Analysis Complete'}
+              </span>
+              <span className="text-sm font-medium text-gray-700">{Math.round(progress)}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3">
+              <div
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 h-3 rounded-full transition-all duration-300 ease-out"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <div className="py-2">
+            <span className="text-base" style={{ color: '#6B6B6B' }}>Estimated remaining time: </span>
+              <span style={{ color: '#6B6B6B' }}>
+                {progress >= 100 ? 'Complete' :
+                 progress >= 90 ? '30 seconds' :
+                 progress >= 60 ? '1 minute' :
+                 progress >= 10 ? '1.5 minutes' : '2 minutes'}
+             </span>
+            </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div 
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 h-3 rounded-full transition-all duration-300 ease-out"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700">Estimated remaining time</span>
-            <span className="text-sm font-medium text-gray-700">
-              {progress >= 100 ? 'Complete' : 
-               progress >= 90 ? '30 seconds' :
-               progress >= 60 ? '1 minute' :
-               progress >= 10 ? '1.5 minutes' : '2 minutes'}
-            </span>
+
+          {/* What will happen next */}
+          <div className="mt-12">
+            <h3 className="text-black text-base font-semibold mb-3">What will happen next?</h3>
+            <p className="text-black text-base leading-relaxed">
+              Our AI is performing a comprehensive analysis of your manuscript, checking for quality, completeness, and relevance. This process ensures you receive the most accurate and helpful feedback possible.
+            </p>
           </div>
         </div>
-
-        {/* What will happen next */}
-        <div className="mt-12  border border-blue-200 rounded-lg p-6 max-w-4xl mx-auto">
-          <h3 className="text-lg font-semibold mb-3">What will happen next?</h3>
-          <p className="text-sm leading-relaxed">
-            Elsevier AI is performing a comprehensive analysis of your manuscript, checking for quality, completeness, and relevance. This process ensures you receive the most accurate and helpful feedback possible.
-          </p>
-        </div>
-
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ export default function Header() {
                 height={64}
               />
             </div>
-            <h1 className="text-xl font-semibold text-gray-900">
+            <h1 className="text-xl" style={{ color: '#EB6500' }}>
               Get Your Manuscript Ready
             </h1>
           </div>

@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-200 mt-auto">
+<footer className="fixed bottom-0 left-0 w-full bg-white border-t border-[#FF4203] shadow z-50">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Left side - Elsevier logo and cookie statement */}

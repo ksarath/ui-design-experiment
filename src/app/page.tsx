@@ -103,7 +103,7 @@ export default function Home() {
             </div>
             
             {/* Privacy Statement Box */}
-            <div className="border border-blue-200 rounded-lg p-4 max-w-2xl" style={{ backgroundColor: '#D6F1FF' }}>
+            <div className="p-4 max-w-2xl" style={{ backgroundColor: '#D6F1FF' }}>
               <div className="flex items-start space-x-3">
                 <div className="flex-shrink-0">
                   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
@@ -111,7 +111,7 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-sm font-semibold text-blue-900 mb-2">Privacy Protection</h4>
+                  <h4 className="text-sm font-semibold text-blue-900 mb-2">Privacy Statement</h4>
                   <p className="text-sm leading-relaxed" style={{ color: '#004F7A' }}>
                     Your research paper is protected by Elsevier privacy policy. The content will only be used for the purpose of review and will not be shared with third parties. The content will not be used to train AI models, nor shared to any open AI models.
                   </p>
