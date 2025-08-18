@@ -67,11 +67,11 @@ export default function Home() {
           <div className="lg:col-span-2 flex flex-col justify-center space-y-8">
             <div className="space-y-6">
               <h1 className="text-4xl lg:text-3xl font-bold text-gray-900 leading-tight">
-                Improve your manuscript quality using Elsevier AI
+                Improve your manuscript using Elsevier AI
               </h1>
               
               <p className="text-xl text-gray-600 leading-relaxed max-w-2xl">
-                It reviews your manuscript paragraph by paragraph and provides research-backed suggestions to improve its scientific quality.
+                Our service reviews your manuscript paragraph by paragraph and provides research-backed suggestions to improve its scientific quality.
               </p>
               
               <div className="space-y-4">

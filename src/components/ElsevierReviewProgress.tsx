@@ -150,7 +150,7 @@ export default function ElsevierReviewProgress({ fileName, onComplete }: Elsevie
                 {progress >= 100 ? 'Complete' :
                  progress >= 90 ? '30 seconds' :
                  progress >= 60 ? '1 minute' :
-                 progress >= 10 ? '1.5 minutes' : '2 minutes'}
+                 progress >= 10 ? '1 minute 30 seconds' : '2 minutes'}
              </span>
             </div>
           </div>
