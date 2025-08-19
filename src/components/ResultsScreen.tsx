@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import React, { useState, useRef, JSX } from 'react';
+import React, { useState, JSX } from 'react';
 import { extractedText, reviewComments } from '../utils/manuscriptData';
 
 interface ResultsScreenProps {
@@ -10,14 +10,14 @@ interface ResultsScreenProps {
   onBackToUpload: () => void;
 }
 
-export default function ResultsScreen({ fileName, uploadTime, onBackToUpload }: ResultsScreenProps) {
+export default function ResultsScreen({ fileName, uploadTime }: ResultsScreenProps) {
   const formatUploadTime = (date: Date) => {
     const pad = (n: number) => n.toString().padStart(2, '0');
     return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
   };
 
   const [agreed, setAgreed] = useState<Map<string, boolean>>(new Map());
-  const [selectedFilter, setSelectedFilter] = useState('All');
+  const [selectedFilter, setSelectedFilter] = useState('Unresolved');
   const [severityFilter, setSeverityFilter] = useState<string>('Major');
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
