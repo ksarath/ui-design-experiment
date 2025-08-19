@@ -12,6 +12,7 @@ export type ReviewComment = {
         title?: string;
         link?: string;
     }[];
+    resolved?: boolean;
 };
 
 export type ManuscriptBlock =

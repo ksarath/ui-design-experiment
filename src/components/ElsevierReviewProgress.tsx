@@ -102,7 +102,7 @@ export default function ElsevierReviewProgress({ fileName, onComplete }: Elsevie
         }
         return prev + 2;
       });
-    }, 500);
+    }, 100);
 
     return () => clearInterval(timer);
   }, [onComplete]);
