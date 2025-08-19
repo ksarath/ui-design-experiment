@@ -28,14 +28,14 @@ export default function ResultsScreen({ fileName, uploadTime, onBackToUpload }: 
     'Other'
   ];
 
-  const filters = ['All', 'Clarity', 'References', 'Language', 'Tense Consistency', 'Structure', 'Style', 'Readability', 'Flow', 'Punctuation'];
+  const filters = ['All', ...new Set(reviewComments.map(comment => comment.type))];
 
   // Count suggestions per filter
   const filterCounts: Record<string, number> = {
     All: reviewComments.length,
     ...filters.reduce((acc, filter) => {
       if (filter !== 'All') {
-        acc[filter] = reviewComments.filter(c => c.category === filter).length;
+        acc[filter] = reviewComments.filter(c => c.type === filter).length;
       }
       return acc;
     }, {} as Record<string, number>)
@@ -113,7 +113,7 @@ export default function ResultsScreen({ fileName, uploadTime, onBackToUpload }: 
                     // Find if this block is referenced by a suggestion
                     const matchingCommentIndex = reviewComments
                       .filter(comment =>
-                        selectedFilter === 'All' ? true : comment.category === selectedFilter
+                        selectedFilter === 'All' || comment.type === selectedFilter
                       )
                       .findIndex(c => c.blockId && block.blockId && c.blockId === block.blockId);
 
@@ -166,7 +166,7 @@ export default function ResultsScreen({ fileName, uploadTime, onBackToUpload }: 
                 <ul className="space-y-4 text-left">
                   {reviewComments
                     .filter(comment =>
-                      selectedFilter === 'All' ? true : comment.category === selectedFilter
+                      selectedFilter === 'All' ? true : comment.type === selectedFilter
                     )
                     .map((comment, filteredIndex) => {
                       const pillColor = getSuggestionColor(filteredIndex);
@@ -191,18 +191,16 @@ export default function ResultsScreen({ fileName, uploadTime, onBackToUpload }: 
                           <div className="flex items-center justify-between mb-2">
                             {/* Category pill */}
                             <span className={`px-2 py-0.5 rounded-full border text-xs font-medium ${pillColor}`}>
-                              {comment.category}
+                              {comment.type}
                             </span>
                             {/* Type box with custom info icon */}
                             <span
                               className={`px-2 py-1 text-xs flex items-center gap-1
                                 ${
-                                  comment.type === 'major'
+                                  comment.category === 'major'
                                     ? 'bg-[#FFCCCE] border border-[#5C0004] text-[#5C0004]'
-                                    : comment.type === 'minor'
+                                    : comment.category === 'minor'
                                     ? 'bg-[#D6F1FF] border border-[#004F7A] text-[#004F7A]'
-                                    : comment.type === 'enhancement'
-                                    ? 'bg-green-200 border border-green-900 text-green-900'
                                     : 'bg-gray-100 border border-gray-700 text-gray-700'
                                 }
                               `}
@@ -222,11 +220,11 @@ export default function ResultsScreen({ fileName, uploadTime, onBackToUpload }: 
                                 <circle cx="10" cy="7" r="1" fill="currentColor" />
                                 <rect x="9.4" y="10" width="1" height="5" rx="0.6" fill="currentColor" />
                               </svg>
-                              {comment.type.charAt(0).toUpperCase() + comment.type.slice(1)}
+                              {comment.category.charAt(0).toUpperCase() + comment.category.slice(1)}
                             </span>
                           </div>
                           <div className="text-xs text-gray-700 mb-8">
-                            {comment.originalText}
+                            {comment.review}
                           </div>
                           {/* Accept/Dismiss buttons bottom left */}
                           <div className="absolute left-3 bottom-3 flex gap-2 accept-dismiss-btn">
@@ -236,43 +234,22 @@ export default function ResultsScreen({ fileName, uploadTime, onBackToUpload }: 
                               tabIndex={0}
                               onClick={e => e.stopPropagation()}
                             >
-                              Accept
+                              Agree
                             </button>
                             <button
                               className="px-3 py-1 bg-white text-[#006AA3] text-xs hover:bg-blue-50 transition"
                               type="button"
                               tabIndex={0}
-                              onClick={e => e.stopPropagation()}
+                              onClick={e => {
+                                e.stopPropagation(); 
+                                setActiveDropdown(activeDropdown === comment.id ? null : comment.id);
+                              }}
                             >
-                              Dismiss
-                            </button>
-                          </div>
-                          {/* Thumbs up/down icons bottom right */}
-                          <div className="absolute right-3 bottom-3 flex gap-2">
-                            <button
-                              className="p-1 rounded hover:bg-gray-100 transition"
-                              aria-label="Thumbs Up"
-                              type="button"
-                              tabIndex={0}
-                              onClick={e => e.stopPropagation()}
-                            >
-                              <HandThumbUpIcon className="w-4 h-4 text-[#006AA3]" />
+                              Disagree
                             </button>
                             <div className="relative thumbs-dropdown">
-                              <button
-                                className="p-1 rounded hover:bg-gray-100 transition"
-                                aria-label="Thumbs Down"
-                                type="button"
-                                tabIndex={0}
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  setActiveDropdown(activeDropdown === comment.id ? null : comment.id);
-                                }}
-                              >
-                                <HandThumbDownIcon className="w-4 h-4 text-[#006AA3]" />
-                              </button>
                               {activeDropdown === comment.id && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg z-10">
+                                <div className="absolute left-0 mt-8 w-48 bg-white border border-gray-200 rounded shadow-lg z-10">
                                   <ul className="py-2">
                                     {thumbsDownReasons.map(reason => (
                                       <li
