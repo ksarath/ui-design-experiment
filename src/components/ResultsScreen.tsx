@@ -22,9 +22,10 @@ export default function ResultsScreen({ fileName, uploadTime }: ResultsScreenPro
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const thumbsDownReasons = [
-    'Incorrect Suggestion',
-    'Offensive Comment',
-    'Not Relevant',
+    'Feedback is unclear',
+    'Feedback is inaccurate',
+    'Feedback is too generic',
+    'Feedback is not addressing my work directly',
     'Other'
   ];
 
