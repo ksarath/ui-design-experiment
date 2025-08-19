@@ -46,7 +46,7 @@ export default function ResultsScreen({ fileName, uploadTime, onBackToUpload }: 
   };
 
   // Map blockId to refs
-  let blockRefs: { [key: string]: React.RefObject<HTMLDivElement | null> } = {};
+  const blockRefs: { [key: string]: React.RefObject<HTMLDivElement | null> } = {};
   extractedText.map(e => {
     blockRefs[e.blockId] = React.createRef<HTMLDivElement>();
   });
