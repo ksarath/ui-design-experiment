@@ -98,7 +98,7 @@ export default function ResultsScreen({ fileName, uploadTime }: ResultsScreenPro
 
   return (
     <div className="bg-white min-h-screen flex flex-col">
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="flex-1 max-w-8xl px-4 sm:px-6 lg:px-8 py-12">
         {/* Two-column layout for manuscript and suggestions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-8">
           {/* Shared height flex container */}
